@@ -5,7 +5,7 @@ import { RoutePath } from "types/routes";
 import { navigationItems } from "data/navigation";
 import { DateTime } from "luxon";
 import ProductItemList from "components/ProductItemList";
-
+import ProductItem from "components/ProductItem";
 const Home = () => {
 	const dateDescription = DateTime.now().toLocaleString({
 		...DateTime.DATE_SHORT,
@@ -34,7 +34,9 @@ const Home = () => {
 						<b>Pizzas</b>
 					</S.HomeProductTitle>
 					<S.HomeProductList>
-						<ProductItemList></ProductItemList>
+						<ProductItemList>
+							<ProductItem></ProductItem>
+						</ProductItemList>
 					</S.HomeProductList>
 				</div>
 			</S.HomeContent>

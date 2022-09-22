@@ -6,6 +6,7 @@ import { navigationItems } from "data/navigation";
 import { DateTime } from "luxon";
 import ProductItemList from "components/ProductItemList";
 import ProductItem from "components/ProductItem";
+import OrderDetails from "components/OrderDetails";
 const Home = () => {
 	const dateDescription = DateTime.now().toLocaleString({
 		...DateTime.DATE_SHORT,
@@ -41,7 +42,7 @@ const Home = () => {
 				</div>
 			</S.HomeContent>
 			<aside>
-				<p>Detalhes dos pedidos aqui</p>
+				<OrderDetails></OrderDetails>
 			</aside>
 		</S.Home>
 	);

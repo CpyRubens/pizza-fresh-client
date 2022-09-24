@@ -7,6 +7,9 @@ import { DateTime } from "luxon";
 import ProductItemList from "components/ProductItemList";
 import ProductItem from "components/ProductItem";
 import OrderDetails from "components/OrderDetails";
+import Overlays from "components/Overlay";
+import CheckoutSection from "components/CheckoutSection";
+
 const Home = () => {
 	const dateDescription = DateTime.now().toLocaleString({
 		...DateTime.DATE_SHORT,
@@ -44,6 +47,9 @@ const Home = () => {
 			<aside>
 				<OrderDetails></OrderDetails>
 			</aside>
+			<Overlays>
+				<CheckoutSection />
+			</Overlays>
 		</S.Home>
 	);
 };

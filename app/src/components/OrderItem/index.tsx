@@ -1,15 +1,18 @@
 import { ReactComponent as Trash } from "assets/icons/trash.svg";
 import { ButtonHTMLAttributes, useEffect, useState } from "react";
+import { OrderItemType } from "types/OrderItemType";
 import { ProductResponse } from "types/Product";
 import * as S from "./style";
 
 type DivType = ButtonHTMLAttributes<HTMLDivElement>;
 
 export type OrderItemProps = {
+  canDelete?: Boolean;
   product: ProductResponse;
   quantity: number;
   observation?: string;
-  onRemoveItem?:() => void
+  onRemoveItem?: () => void;
+  onItemChange: (item: OrderItemType) => void;
 } & DivType;
 
 const OrderItem = ({
@@ -17,6 +20,8 @@ const OrderItem = ({
   quantity,
   observation = "",
   onRemoveItem,
+  onItemChange,
+  canDelete = true,
   ...props
 }: OrderItemProps) => {
   const [quantityState, setQuantityState] = useState(quantity);
@@ -29,6 +34,14 @@ const OrderItem = ({
   const handleObservation = (data: string) => {
     setObservationState(data);
   };
+
+  const HandleChange = (quantityParam: number, observationParam: string) => {
+    onItemChange({
+      product: product,
+      quantity: quantityParam,
+      observation: observationParam,
+    });
+  }
 
   useEffect(() => {
     handleQuantity(quantity)
@@ -60,6 +73,7 @@ const OrderItem = ({
             value={quantityState}
             onChange={({ target }) => {
               setQuantityState(Number(target.value));
+              HandleChange(Number(target.value), observationState)
             }}
           />
         </S.OrderItemLeftTop>
@@ -69,6 +83,7 @@ const OrderItem = ({
           placeholder="Observações do pedido"
           onChange={({ target }) => {
             setObservationState(target.value);
+            HandleChange(quantityState, target.value)
           }}
         />
       </S.OrderItemLeft>
@@ -76,9 +91,11 @@ const OrderItem = ({
         <S.OrderItemRightTotalPrice>
           R$ {Number(product.price * quantityState).toFixed(2)}
         </S.OrderItemRightTotalPrice>
-        <S.OrderItemRightTrash onClick={onRemoveItem}>
+
+        {canDelete && (<S.OrderItemRightTrash onClick={onRemoveItem}>
           <Trash />
         </S.OrderItemRightTrash >
+        )}
       </S.OrderItemRight>
     </S.OrderItens>
   );

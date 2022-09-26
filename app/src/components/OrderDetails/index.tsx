@@ -11,12 +11,17 @@ type OrderDetailsType = HTMLAttributes<HTMLDivElement>;
 
 type OrderDetailsProps = {
   orders: OrderItemType[];
+  onProceedToPayment: () => void;
   onChangeActiveOrderType: (data: OrderType) => void;
+  onOrdersChange: (orders: OrderItemType[]) => void;
   onRemoveItem: (id: string) => void;
   activeOrderType: OrderType;
 } & OrderDetailsType;
 
-const OrderDetails = ({ orders,
+const OrderDetails = ({
+  orders,
+  onProceedToPayment,
+  onOrdersChange,
   onChangeActiveOrderType,
   onRemoveItem,
   activeOrderType
@@ -27,6 +32,12 @@ const OrderDetails = ({ orders,
 
   const [priceState, setPriceState] = useState(price);
 
+  const handleChange = (data: OrderItemType) => {
+    const list = orders.map((item) =>
+      item.product.id === data.product.id ? data : item
+    );
+    onOrdersChange(list)
+  }
   useEffect(() => {
     setPriceState(price)
   },
@@ -52,6 +63,7 @@ const OrderDetails = ({ orders,
             Boolean(orders.length) ? (
               orders.map((item, index) => (
                 <OrderItem
+                  onItemChange={handleChange}
                   product={item.product}
                   quantity={item.quantity}
                   onRemoveItem={() => onRemoveItem(item.product.id)}
@@ -69,7 +81,9 @@ const OrderDetails = ({ orders,
                 <span>Subtotal</span>
                 <span>R${priceState.toFixed(2)}</span>
               </S.OrderDetailsListFooterRow>
-              <ButtonLarge value="Continue para o pagamento" />
+              <ButtonLarge
+                onClick={onProceedToPayment}
+                value="Continue para o pagamento" />
             </S.OrderDetailsListFooter>
           }
         />

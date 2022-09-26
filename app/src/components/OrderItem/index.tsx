@@ -76,9 +76,9 @@ const OrderItem = ({
         <S.OrderItemRightTotalPrice>
           R$ {Number(product.price * quantityState).toFixed(2)}
         </S.OrderItemRightTotalPrice>
-        <S.OrderItemRightTrash>
+        <S.OrderItemRightTrash onClick={onRemoveItem}>
           <Trash />
-        </S.OrderItemRightTrash>
+        </S.OrderItemRightTrash >
       </S.OrderItemRight>
     </S.OrderItens>
   );

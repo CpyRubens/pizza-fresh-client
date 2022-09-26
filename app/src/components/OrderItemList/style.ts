@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-export const OrderItemListTitle = styled.header`
+export const OrderItemListTitles = styled.header`
 	${({ theme }) => css`
 		${theme.mixins.bodyStyle()};
 		padding-bottom: 15px;

@@ -8,8 +8,9 @@ const OrderConfirmation = () => {
         <S.OrderConfirmation>
             <S.OrderConfirmationHead>Confirmação</S.OrderConfirmationHead>
             <S.OrderConfirmationSub>Detalhes do pedido</S.OrderConfirmationSub>
-            <OrderItemList
-                list={<OrderItem />}
+            {/* <OrderItemList
+                list={<OrderItem
+                     />}
                 footer={
                     <S.OrderConfirmationFooter>
                         <S.OrderConfirmationFooterRow>
@@ -17,7 +18,7 @@ const OrderConfirmation = () => {
                             <span>R$ 150.00</span>
                         </S.OrderConfirmationFooterRow>
                     </S.OrderConfirmationFooter>
-                } />
+                } /> */}
         </S.OrderConfirmation>
     );
 }

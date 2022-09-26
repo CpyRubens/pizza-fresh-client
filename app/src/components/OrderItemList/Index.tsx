@@ -1,6 +1,6 @@
 import React, { HTMLAttributes } from "react";
 import * as S from "./style";
-import OrderItem from "components/OrderItem";
+
 type DivType = HTMLAttributes<HTMLDivElement>;
 
 export type OrderItemListProps = {
@@ -17,9 +17,9 @@ const OrderItemList = ({
 }: OrderItemListProps) => {
 	return (
 		<div {...props}>
-			{header && <S.OrderItemListTitle> {header} </S.OrderItemListTitle>}
+			{header && <S.OrderItemListTitles> {header} </S.OrderItemListTitles>}
 
-			<S.OrderItemList role="listbox">{<OrderItem></OrderItem>}</S.OrderItemList>
+			<S.OrderItemList role="listbox">{list}</S.OrderItemList>
 
 			{footer && <footer> {footer} </footer>}
 		</div>
@@ -27,3 +27,4 @@ const OrderItemList = ({
 };
 
 export default OrderItemList;
+

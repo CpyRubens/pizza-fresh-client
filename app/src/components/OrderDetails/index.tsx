@@ -4,22 +4,38 @@ import OrderItem from "components/OrderItem";
 import OrderItemList from "components/OrderItemList/Index";
 import { HTMLAttributes, useEffect, useState } from "react";
 import { OrderItemType } from "types/OrderItemType";
+import { OrderType } from "types/orderType";
 import * as S from "./style";
 
 type OrderDetailsType = HTMLAttributes<HTMLDivElement>;
 
 type OrderDetailsProps = {
   orders: OrderItemType[];
+  onChangeActiveOrderType: (data: OrderType) => void;
+  activeOrderType: OrderType;
 } & OrderDetailsType;
 
-const OrderDetails = ({ orders }: OrderDetailsProps) => {
+const OrderDetails = ({ orders,
+  onChangeActiveOrderType,
+  activeOrderType
+}: OrderDetailsProps) => {
+  const price = orders
+    .map((i) => i.product.price * i.quantity)
+    .reduce((a, b) => a + b, 0);
+
+  const [priceState, setPriceState] = useState(price);
+
+  useEffect(() => {
+    setPriceState(price)
+  },
+    [orders, price])
   return (
     <S.OrderDetails>
       <S.OrderDetailsTitle>Detalhes do Pedido</S.OrderDetailsTitle>
       <S.OrderDetailsButtonGroup>
-        <ButtonToggle active={true} value="Comer no Local" />
-        <ButtonToggle active={false} value="P/ Viagem" />
-        <ButtonToggle active={true} value="Delivery" />
+        <ButtonToggle onClick={()=> onChangeActiveOrderType(OrderType.COMER_NO_LOCAL)} active={activeOrderType === OrderType.COMER_NO_LOCAL} value="Comer no Local" />
+        <ButtonToggle onClick={()=> onChangeActiveOrderType(OrderType.PARA_VIAGEM)} active={activeOrderType === OrderType.PARA_VIAGEM} value="P/ Viagem" />
+        <ButtonToggle onClick={()=> onChangeActiveOrderType(OrderType.DELIVERY)} active={activeOrderType === OrderType.DELIVERY} value="Delivery" />
       </S.OrderDetailsButtonGroup>
       <S.OrderDetailsList>
         <OrderItemList
@@ -48,7 +64,7 @@ const OrderDetails = ({ orders }: OrderDetailsProps) => {
             <S.OrderDetailsListFooter>
               <S.OrderDetailsListFooterRow>
                 <span>Subtotal</span>
-                <span>R$ 10.00</span>
+                <span>R${priceState.toFixed(2)}</span>
               </S.OrderDetailsListFooterRow>
               <ButtonLarge value="Continue para o pagamento" />
             </S.OrderDetailsListFooter>

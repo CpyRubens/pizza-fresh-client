@@ -34,7 +34,7 @@ export const orders: OrderItemType[] = [
         "https://drive.google.com/uc?export=view&id=1wer1S3jrUEcTG_ke23Mzx7WgDBkhT3sJ",
       price: 30.29,
     },
-    quantity: 2,
+    quantity: 3,
     observation: "",
   },
 ];

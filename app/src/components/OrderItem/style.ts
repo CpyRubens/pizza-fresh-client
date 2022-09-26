@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 
-export const OrderItem = styled.div`
+export const OrderItens = styled.div`
 	${() => css`
 		display: flex;
 		gap: 15px;

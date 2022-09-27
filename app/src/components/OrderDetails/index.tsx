@@ -11,9 +11,10 @@ type OrderDetailsType = HTMLAttributes<HTMLDivElement>;
 
 type OrderDetailsProps = {
   orders: OrderItemType[];
+  selectedTable?: number | string;
   onProceedToPayment: () => void;
-  onChangeActiveOrderType: (data: OrderType) => void;
   onOrdersChange: (orders: OrderItemType[]) => void;
+  onChangeActiveOrderType: (data: OrderType) => void;
   onRemoveItem: (id: string) => void;
   activeOrderType: OrderType;
 } & OrderDetailsType;
@@ -24,7 +25,8 @@ const OrderDetails = ({
   onOrdersChange,
   onChangeActiveOrderType,
   onRemoveItem,
-  activeOrderType
+  activeOrderType,
+  selectedTable,
 }: OrderDetailsProps) => {
   const price = orders
     .map((i) => i.product.price * i.quantity)
@@ -32,23 +34,42 @@ const OrderDetails = ({
 
   const [priceState, setPriceState] = useState(price);
 
+  const disabledButton =
+    !Boolean(orders.length) ||
+    !Boolean(selectedTable) ||
+    selectedTable === "default";
+
   const handleChange = (data: OrderItemType) => {
     const list = orders.map((item) =>
       item.product.id === data.product.id ? data : item
     );
-    onOrdersChange(list)
-  }
+
+    onOrdersChange(list);
+  };
+
   useEffect(() => {
-    setPriceState(price)
-  },
-    [orders, price])
+    setPriceState(price);
+  }, [orders, price]);
+
   return (
     <S.OrderDetails>
       <S.OrderDetailsTitle>Detalhes do Pedido</S.OrderDetailsTitle>
       <S.OrderDetailsButtonGroup>
-        <ButtonToggle onClick={() => onChangeActiveOrderType(OrderType.COMER_NO_LOCAL)} active={activeOrderType === OrderType.COMER_NO_LOCAL} value="Comer no Local" />
-        <ButtonToggle onClick={() => onChangeActiveOrderType(OrderType.PARA_VIAGEM)} active={activeOrderType === OrderType.PARA_VIAGEM} value="P/ Viagem" />
-        <ButtonToggle onClick={() => onChangeActiveOrderType(OrderType.DELIVERY)} active={activeOrderType === OrderType.DELIVERY} value="Delivery" />
+        <ButtonToggle
+          onClick={() => onChangeActiveOrderType(OrderType.COMER_NO_LOCAL)}
+          active={activeOrderType === OrderType.COMER_NO_LOCAL}
+          value="Comer no Local"
+        />
+        <ButtonToggle
+          onClick={() => onChangeActiveOrderType(OrderType.PARA_VIAGEM)}
+          active={activeOrderType === OrderType.PARA_VIAGEM}
+          value="P/ Viagem"
+        />
+        <ButtonToggle
+          onClick={() => onChangeActiveOrderType(OrderType.DELIVERY)}
+          active={activeOrderType === OrderType.DELIVERY}
+          value="Delivery"
+        />
       </S.OrderDetailsButtonGroup>
       <S.OrderDetailsList>
         <OrderItemList
@@ -64,9 +85,9 @@ const OrderDetails = ({
               orders.map((item, index) => (
                 <OrderItem
                   onItemChange={handleChange}
+                  onRemoveItem={() => onRemoveItem(item.product.id)}
                   product={item.product}
                   quantity={item.quantity}
-                  onRemoveItem={() => onRemoveItem(item.product.id)}
                   observation={item.observation}
                   key={`OrderDetails-${index}`}
                 />
@@ -79,11 +100,18 @@ const OrderDetails = ({
             <S.OrderDetailsListFooter>
               <S.OrderDetailsListFooterRow>
                 <span>Subtotal</span>
-                <span>R${priceState.toFixed(2)}</span>
+                <span>R$ {priceState.toFixed(2)}</span>
               </S.OrderDetailsListFooterRow>
+              {(!Boolean(selectedTable) || selectedTable === "default") && (
+                <S.OrderDetailsListFooterWarning>
+                  Escolha a mesa primeiro
+                </S.OrderDetailsListFooterWarning>
+              )}
               <ButtonLarge
                 onClick={onProceedToPayment}
-                value="Continue para o pagamento" />
+                disabled={disabledButton}
+                value="Continue para o pagamento"
+              />
             </S.OrderDetailsListFooter>
           }
         />

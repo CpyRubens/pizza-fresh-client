@@ -10,45 +10,67 @@ import OrderDetails from "components/OrderDetails";
 import Overlay from "components/Overlay";
 import CheckoutSection from "components/CheckoutSection";
 import { useNavigate } from "react-router-dom";
-import { products } from "mocks/products";
-//import { orders } from "mocks/orders";
 import { ProductResponse } from "types/Product";
-import { useState } from "react";
 import { OrderType } from "types/orderType";
+import { useEffect, useState } from "react";
 import { OrderItemType } from "types/OrderItemType";
+import { useQuery } from "@tanstack/react-query";
+import { QueryKey } from "types/QueryKey";
+import { ProductService } from "services/ProductService";
+import { TableService } from "services/TableService";
 
 const Home = () => {
   const dateDescription = DateTime.now().toLocaleString({
     ...DateTime.DATE_SHORT,
     weekday: "long",
   });
+
   const navigate = useNavigate();
 
-  const [activeOrderType, setActiveOrderType] = useState(
+  const { data: productsData } = useQuery(
+    [QueryKey.PRODUCTS],
+    ProductService.getLista
+  );
+  
+    // Após a atualização da biblioteca react query (sendo utilizada como @tanstack/react-query), o método useQuery agora só aceita array como primeiro parâmetro ao invés de string como mostrado no vídeo
+  const { data: tablesData } = useQuery(
+    [QueryKey.TABLES],
+    TableService.getLista
+  );
+  
+  const tables = tablesData || [];
+
+  const [products, setProducts] = useState<ProductResponse[]>([]);
+
+  const [activeOrderType, setActiverOrderType] = useState(
     OrderType.COMER_NO_LOCAL
   );
 
   const [orders, setOrders] = useState<OrderItemType[]>([]);
-  const [selectedTable, setSelectedTable] = useState<number | undefined>()
+  const [selectedTable, setSelectedTable] = useState<number | undefined>();
   const [proceedToPayment, setProceedToPayment] = useState<boolean>(false);
 
   const handleNavigation = (path: RoutePath) => navigate(path);
 
   const handleSelection = (product: ProductResponse) => {
-    const existing = orders.find((i) => i.product.id === product.id)
-    const quantity = existing ? existing.quantity + 1 : 1
+    const existing = orders.find((i) => i.product.id === product.id);
+    const quantity = existing ? existing.quantity + 1 : 1;
     const item: OrderItemType = { product, quantity };
+
     const list = existing
-      ? orders.map((i) => (i.product.id === existing.product.id ? item : i)) :
-      [...orders, item];
-    setOrders(list)
+      ? orders.map((i) => (i.product.id === existing.product.id ? item : i))
+      : [...orders, item];
+    setOrders(list);
   };
 
   const handleRemoveOrderItem = (id: string) => {
     const filtered = orders.filter((i) => i.product.id != id);
-    setOrders(filtered)
-  }
+    setOrders(filtered);
+  };
 
+  useEffect(() => {
+    setProducts(productsData || []);
+  }, [productsData]);
 
   return (
     <S.Home>
@@ -78,9 +100,7 @@ const Home = () => {
             <b>Pizzas</b>
           </S.HomeProductTitle>
           <S.HomeProductList>
-            <ProductItemList
-              onSelectTable={setSelectedTable}
-            >
+            <ProductItemList tables={tables} onSelectTable={setSelectedTable}>
               {Boolean(products.length) &&
                 products.map((product, index) => (
                   <ProductItem
@@ -89,34 +109,33 @@ const Home = () => {
                     onSelect={handleSelection}
                   />
                 ))}
-            </ProductItemList >
+            </ProductItemList>
           </S.HomeProductList>
         </div>
       </S.HomeContent>
       <aside>
         <OrderDetails
-          onProceedToPayment={() => setProceedToPayment(true)}
           orders={orders}
+          onProceedToPayment={() => setProceedToPayment(true)}
           onOrdersChange={(data) => setOrders(data)}
-          onRemoveItem={handleRemoveOrderItem}
-          onChangeActiveOrderType={(data) => setActiveOrderType(data)}
+          onChangeActiveOrderType={(data) => setActiverOrderType(data)}
           activeOrderType={activeOrderType}
-          selectedTable={selectedTable} />
+          onRemoveItem={handleRemoveOrderItem}
+          selectedTable={selectedTable}
+        />
       </aside>
       {proceedToPayment && (
         <Overlay>
           <CheckoutSection
             orders={orders}
             onOrdersChange={(data) => setOrders(data)}
-            onCloseSection={() => (setProceedToPayment(false))}
-            selectedTable={selectedTable}
-            onChangeActiveOrderType={(data) => setActiveOrderType(data)}
+            onChangeActiveOrderType={(data) => setActiverOrderType(data)}
             activeOrderType={activeOrderType}
+            onCloseSection={() => setProceedToPayment(false)}
+            selectedTable={selectedTable}
           />
-
         </Overlay>
-      )
-      }
+      )}
     </S.Home>
   );
 };

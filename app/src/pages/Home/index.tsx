@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { ProductResponse } from "types/api/product";
 import { useEffect, useState } from "react";
 import { OrderType } from "types/orderType";
+import { useEffect, useState } from "react";
 import { OrderItemType } from "types/OrderItemType";
 import { useQuery } from "react-query";
 import { QueryKey } from "types/QueryKey";
@@ -29,6 +30,7 @@ const Home = () => {
     ...DateTime.DATE_SHORT,
     weekday: "long",
   });
+
   const navigate = useNavigate();
 
   const { data: productsData } = useQuery(
@@ -49,7 +51,7 @@ const Home = () => {
   );
 
   const [orders, setOrders] = useState<OrderItemType[]>([]);
-  const [selectedTable, setSelectedTable] = useState<number | undefined>()
+  const [selectedTable, setSelectedTable] = useState<number | undefined>();
   const [proceedToPayment, setProceedToPayment] = useState<boolean>(false);
 
   const [filteredProducts, setFilteredProducts] = useState<ProductResponse[]>([]);
@@ -57,19 +59,20 @@ const Home = () => {
   const handleNavigation = (path: RoutePath) => navigate(path);
 
   const handleSelection = (product: ProductResponse) => {
-    const existing = orders.find((i) => i.product.id === product.id)
-    const quantity = existing ? existing.quantity + 1 : 1
+    const existing = orders.find((i) => i.product.id === product.id);
+    const quantity = existing ? existing.quantity + 1 : 1;
     const item: OrderItemType = { product, quantity };
+
     const list = existing
-      ? orders.map((i) => (i.product.id === existing.product.id ? item : i)) :
-      [...orders, item];
-    setOrders(list)
+      ? orders.map((i) => (i.product.id === existing.product.id ? item : i))
+      : [...orders, item];
+    setOrders(list);
   };
 
   const handleRemoveOrderItem = (id: string) => {
     const filtered = orders.filter((i) => i.product.id != id);
-    setOrders(filtered)
-  }
+    setOrders(filtered);
+  };
 
   const handleFilter = (title: string) => {
     const list = products.filter(({ name }) => matchByText(name, title));
@@ -120,34 +123,33 @@ const Home = () => {
                     onSelect={handleSelection}
                   />
                 ))}
-            </ProductItemList >
+            </ProductItemList>
           </S.HomeProductList>
         </div>
       </S.HomeContent>
       <aside>
         <OrderDetails
-          onProceedToPayment={() => setProceedToPayment(true)}
           orders={orders}
+          onProceedToPayment={() => setProceedToPayment(true)}
           onOrdersChange={(data) => setOrders(data)}
-          onRemoveItem={handleRemoveOrderItem}
-          onChangeActiveOrderType={(data) => setActiveOrderType(data)}
+          onChangeActiveOrderType={(data) => setActiverOrderType(data)}
           activeOrderType={activeOrderType}
-          selectedTable={selectedTable} />
+          onRemoveItem={handleRemoveOrderItem}
+          selectedTable={selectedTable}
+        />
       </aside>
       {proceedToPayment && (
         <Overlay>
           <CheckoutSection
             orders={orders}
             onOrdersChange={(data) => setOrders(data)}
-            onCloseSection={() => (setProceedToPayment(false))}
-            selectedTable={selectedTable}
-            onChangeActiveOrderType={(data) => setActiveOrderType(data)}
+            onChangeActiveOrderType={(data) => setActiverOrderType(data)}
             activeOrderType={activeOrderType}
+            onCloseSection={() => setProceedToPayment(false)}
+            selectedTable={selectedTable}
           />
-
         </Overlay>
-      )
-      }
+      )}
     </S.Home>
   );
 };

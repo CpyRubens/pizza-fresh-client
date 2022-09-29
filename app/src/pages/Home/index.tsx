@@ -15,7 +15,6 @@ import { useNavigate } from "react-router-dom";
 import { ProductResponse } from "types/api/product";
 import { useEffect, useState } from "react";
 import { OrderType } from "types/orderType";
-import { useEffect, useState } from "react";
 import { OrderItemType } from "types/OrderItemType";
 import { useQuery } from "react-query";
 import { QueryKey } from "types/QueryKey";
@@ -132,7 +131,7 @@ const Home = () => {
           orders={orders}
           onProceedToPayment={() => setProceedToPayment(true)}
           onOrdersChange={(data) => setOrders(data)}
-          onChangeActiveOrderType={(data) => setActiverOrderType(data)}
+          onChangeActiveOrderType={(data) => setActiveOrderType(data)}
           activeOrderType={activeOrderType}
           onRemoveItem={handleRemoveOrderItem}
           selectedTable={selectedTable}
@@ -143,7 +142,7 @@ const Home = () => {
           <CheckoutSection
             orders={orders}
             onOrdersChange={(data) => setOrders(data)}
-            onChangeActiveOrderType={(data) => setActiverOrderType(data)}
+            onChangeActiveOrderType={(data) => setActiveOrderType(data)}
             activeOrderType={activeOrderType}
             onCloseSection={() => setProceedToPayment(false)}
             selectedTable={selectedTable}

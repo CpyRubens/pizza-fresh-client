@@ -1,11 +1,13 @@
+import { TableResponse } from "types/api/table";
 import * as S from "./style";
 
 interface ProductItemListProps {
   onSelectTable: (data: number) => void;
   children: React.ReactNode;
+  tables: TableResponse[];
 }
 
-const ProductItemList = ({ children, onSelectTable }: ProductItemListProps) => {
+const ProductItemList = ({ children, tables = [], onSelectTable }: ProductItemListProps) => {
   return (
     <section>
       <S.ProductItemListHeader>
@@ -18,8 +20,9 @@ const ProductItemList = ({ children, onSelectTable }: ProductItemListProps) => {
           id="table"
         >
           <option value="default">Selecione a mesa</option>
-          <option value="01">Mesa 01</option>
-          <option value="02">Mesa 02</option>
+          {tables.map((table, index) => (
+            <option value={table.number} key={`ProdcutItemListOption-${index}`}>Mesa {table.number}</option>
+          ))}
         </S.ProductItemListHeaderSelect>
       </S.ProductItemListHeader>
       <S.ProductItemList>{children}</S.ProductItemList>
